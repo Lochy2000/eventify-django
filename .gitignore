@@ -1,9 +1,39 @@
-core.Microsoft*
-core.mongo*
-core.python*
-env.py
-__pycache__/
+# Virtual Environment
+venv/
+env/
+.env/
+.venv/
+
+# Python
 *.py[cod]
-node_modules/
-.github/
-cloudinary_python.txt
+__pycache__/
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+media
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
