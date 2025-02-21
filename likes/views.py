@@ -16,6 +16,7 @@ class LikeList(generics.ListCreateAPIView):
     filter_backends = [filters.OrderingFilter, DjangoFilterBackend]
     filterset_fields = ['event', 'owner']
     ordering_fields = ['created_at']
+    template_name = None
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)

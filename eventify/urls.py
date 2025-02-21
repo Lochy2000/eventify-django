@@ -30,6 +30,9 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls')),
     path('api/auth/registration/', include('dj_rest_auth.registration.urls')),
 
+
+    path('api/', include('followers.urls')),
+    # path('api/', include('favorites.urls')),
     path('api/', include('comments.urls')),
     path('api/', include('likes.urls')),
     path('api/', include('events.urls')),

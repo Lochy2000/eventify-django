@@ -4,6 +4,9 @@ from django.contrib.auth.models import User
 from events.models import Event
 
 class Comment(models.Model):
+    """
+    Comment model, related to User and Event.
+    """
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     event = models.ForeignKey(
         Event, 
@@ -16,3 +19,6 @@ class Comment(models.Model):
 
     class Meta:
         ordering = ['-created_at']
+        
+    def __str__(self):
+        return f'{self.owner} commented on {self.event}'

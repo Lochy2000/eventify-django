@@ -60,6 +60,8 @@ INSTALLED_APPS = [
     'corsheaders',
 
     # Local apps
+    'followers',
+    'favorites',
     'likes',
     'comments',
     'profiles',
