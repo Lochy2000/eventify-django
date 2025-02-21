@@ -1,21 +1,7 @@
+# events/serializers.py
 from rest_framework import serializers
-from .models import Event, Like, Comment
-
-from rest_framework import serializers
-from .models import Event, Like, Comment
-
-class CommentSerializer(serializers.ModelSerializer):
-    owner = serializers.ReadOnlyField(source='owner.username')
-    is_owner = serializers.SerializerMethodField()
-
-    def get_is_owner(self, obj):
-        request = self.context['request']
-        return request.user == obj.owner
-
-    class Meta:
-        model = Comment
-        fields = ['id', 'owner', 'event', 'content', 'created_at', 'updated_at', 'is_owner']
-
+from .models import Event
+from likes.models import Like
 
 class EventSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.username')

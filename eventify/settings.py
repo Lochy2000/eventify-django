@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     # Third party apps
     'rest_framework',
     'rest_framework.authtoken',
+    'django_filters',
     'dj_rest_auth',
     'django.contrib.sites',
     'allauth',
@@ -59,6 +60,8 @@ INSTALLED_APPS = [
     'corsheaders',
 
     # Local apps
+    'likes',
+    'comments',
     'profiles',
     'events',
 ]
@@ -84,10 +87,14 @@ SITE_ID = 1
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
         'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
     ],
-}
 
+  'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend',
+    ]
+}
 REST_USE_JWT = True
 JWT_AUTH_COOKIE = 'my-app-auth'
 JWT_AUTH_REFRESH_COOKIE = 'my-refresh-token'
