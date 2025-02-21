@@ -1,6 +1,6 @@
 ve# Virtual Environment
 venv/
-env/
+env.py
 .env/
 .venv/
 
