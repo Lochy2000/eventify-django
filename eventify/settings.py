@@ -103,12 +103,10 @@ ROOT_URLCONF = 'eventify.urls'
 
 SITE_ID = 1
 
-# Rest Framework settings
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
-        'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
+        'dj_rest_auth.jwt_auth.JWTCookieAuthentication',  # JWT first
+        'rest_framework.authentication.SessionAuthentication',  # Fallback for session-based auth
     ],
     'DEFAULT_FILTER_BACKENDS': [
         'django_filters.rest_framework.DjangoFilterBackend',
@@ -117,6 +115,13 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 10,
     'DATETIME_FORMAT': '%d %b %Y',
 }
+
+# Restrict renderers in production
+if 'DEV' not in os.environ:
+    REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'] = [
+        'rest_framework.renderers.JSONRenderer',
+    ]
+
 REST_USE_JWT = True
 JWT_AUTH_SECURE = True
 JWT_AUTH_COOKIE = 'my-app-auth'
