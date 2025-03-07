@@ -31,9 +31,9 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = 'DEV' in os.environ
 
-ALLOWED_HOSTS = [os.environ.get('ALLOWED_HOST'),
+ALLOWED_HOSTS = [
+    os.environ.get('ALLOWED_HOST', 'eventify-back-d016873ba1b8.herokuapp.com'),
     'localhost',
-    'https://eventify-back-d016873ba1b8.herokuapp.com/'
 ]
 # CORS settings
 if 'CLIENT_ORIGIN' in os.environ:
