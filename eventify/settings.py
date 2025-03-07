@@ -33,7 +33,7 @@ DEBUG = 'DEV' in os.environ
 
 ALLOWED_HOSTS = [os.environ.get('ALLOWED_HOST'),
     'localhost',
-    'heroku app name goes here!!'
+    'https://eventify-back-d016873ba1b8.herokuapp.com/'
 ]
 # CORS settings
 if 'CLIENT_ORIGIN' in os.environ:
@@ -41,10 +41,9 @@ if 'CLIENT_ORIGIN' in os.environ:
         os.environ.get('CLIENT_ORIGIN')
     ]
 if 'CLIENT_ORIGIN_DEV' in os.environ:
-    extracted_url = re.match(r'^.+-', os.environ.get('CLIENT_ORIGIN_DEV', ''), re.IGNORECASE).group(0)
-    CORS_ALLOWED_ORIGINS_REGEXES = [
-        rf"{extracted_url}(eu|us)\d+\w\.gitpod\.io$",
-    ]
+    dev_origin = os.environ['CLIENT_ORIGIN_DEV']
+    CORS_ALLOWED_ORIGINS = CORS_ALLOWED_ORIGINS or []
+    CORS_ALLOWED_ORIGINS.append(dev_origin)
 
 CORS_ALLOW_CREDENTIALS = True
 
@@ -224,8 +223,8 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-# For development only
-CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000'  # Your React frontend URL
-]
+# # For development only
+# CORS_ALLOW_CREDENTIALS = True
+# CORS_ALLOWED_ORIGINS = [
+#     'http://localhost:3000'  # Your React frontend URL
+# ]
