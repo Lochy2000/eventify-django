@@ -4,7 +4,12 @@ from .settings import (
     JWT_AUTH_COOKIE, JWT_AUTH_REFRESH_COOKIE, JWT_AUTH_SAMESITE,
     JWT_AUTH_SECURE,
 )
+from django.http import HttpResponse
+from django.views.decorators.csrf import ensure_csrf_cookie
 
+@ensure_csrf_cookie
+def csrf(request):
+    return HttpResponse("CSRF cookie set")
 
 @api_view()
 def root_route(request):

@@ -23,6 +23,7 @@ from rest_framework_simplejwt.views import (
 )
 from dj_rest_auth.jwt_auth import get_refresh_view
 from eventify.views import root_route, logout_route
+from .views import csrf
 
 urlpatterns = [
     path('', root_route, name='root'),
@@ -37,6 +38,8 @@ urlpatterns = [
     path('api/auth/registration/', include('dj_rest_auth.registration.urls')),
 
     path('api-auth/', include('rest_framework.urls')),
+
+    path('api/csrf/', csrf, name='csrf'),
 
     path('api/', include('followers.urls')),
     path('api/', include('favorites.urls')),
