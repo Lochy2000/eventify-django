@@ -106,7 +106,7 @@ ROOT_URLCONF = 'eventify.urls'
 SITE_ID = 1
 
 REST_FRAMEWORK = {
-    'EXCEPTION_HANDLER': 'posts.views.custom_exception_handler',
+    'EXCEPTION_HANDLER': 'rest_framework.views.exception_handler',
     'DEFAULT_AUTHENTICATION_CLASSES': [(
         'rest_framework.authentication.SessionAuthentication'
         if 'DEV' in os.environ
@@ -249,4 +249,4 @@ CSRF_TRUSTED_ORIGINS = [
     "https://eventify-front-e281c9a84c02.herokuapp.com/" # production domain
 ]
 CSRF_COOKIE_SAMESITE = 'None'
-CSRF_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = False
