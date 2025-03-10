@@ -19,18 +19,24 @@ from django.urls import path, include
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
+    TokenVerifyView,
 )
+from dj_rest_auth.jwt_auth import get_refresh_view
 from eventify.views import root_route, logout_route
 
 urlpatterns = [
     path('', root_route, name='root'),
     path('admin/', admin.site.urls),
+
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
+
     path('api/auth/', include('dj_rest_auth.urls')),
-    path('api-auth/', include('rest_framework.urls')),
+    path('api/auth/logout/', logout_route, name='logout'),
     path('api/auth/registration/', include('dj_rest_auth.registration.urls')),
 
+    path('api-auth/', include('rest_framework.urls')),
 
     path('api/', include('followers.urls')),
     path('api/', include('favorites.urls')),
