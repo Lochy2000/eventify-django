@@ -10,10 +10,11 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 
 @ensure_csrf_cookie
 def csrf(request):
-    return HttpResponse("CSRF cookie set", headers={
-        "Access-Control-Allow-Credentials": "true",
-        "Access-Control-Allow-Origin": request.headers.get("Origin", "*")
-    })
+    print("CSRF cookie request received")
+    response = HttpResponse("CSRF cookie set")
+    response["Access-Control-Allow-Origin"] = request.headers.get("Origin", "*")
+    response["Access-Control-Allow-Credentials"] = "true"
+    return response
 
 @api_view()
 def root_route(request):
@@ -23,6 +24,7 @@ def root_route(request):
 
 @api_view(['POST'])
 def logout_route(request):
+    print("Logout request received")
     response = Response({"detail": "Successfully logged out."})
     response.set_cookie(
         key=JWT_AUTH_COOKIE,
@@ -42,4 +44,6 @@ def logout_route(request):
         samesite=JWT_AUTH_SAMESITE,
         secure=JWT_AUTH_SECURE,
     )
+    response["Access-Control-Allow-Origin"] = request.headers.get("Origin", "*")
+    response["Access-Control-Allow-Credentials"] = "true"
     return response

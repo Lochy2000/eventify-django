@@ -29,25 +29,44 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('SECRET_KEY')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = 'DEV' in os.environ
+# Debug mode
+DEBUG = True
 
 ALLOWED_HOSTS = [
     os.environ.get('ALLOWED_HOST', 'eventify-back-d016873ba1b8.herokuapp.com'),
     'localhost',
 ]
 # CORS settings
-if 'CLIENT_ORIGIN' in os.environ:
-    CORS_ALLOWED_ORIGINS = [
-        os.environ.get('CLIENT_ORIGIN'),
-        'http://localhost:3000'
-    ]
-if 'CLIENT_ORIGIN_DEV' in os.environ:
-    dev_origin = os.environ['CLIENT_ORIGIN_DEV']
-    CORS_ALLOWED_ORIGINS = CORS_ALLOWED_ORIGINS or []
-    CORS_ALLOWED_ORIGINS.append(dev_origin)
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',
+    'https://eventify-front-e281c9a84c02.herokuapp.com',
+]
 
+# Allow credentials for CORS
 CORS_ALLOW_CREDENTIALS = True
+
+# Allow all CORS methods
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
+
+# Allow these headers with CORS
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
 
 # Media files
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
@@ -128,14 +147,14 @@ if 'DEV' not in os.environ:
 
 REST_USE_JWT = True
 JWT_AUTH_SECURE = True
-JWT_AUTH_COOKIE = 'my-app-auth'
-JWT_AUTH_REFRESH_COOKIE = 'my-refresh-token'
+JWT_AUTH_COOKIE = 'csrftoken'
+JWT_AUTH_REFRESH_COOKIE = 'refresh-token'
 JWT_AUTH_SAMESITE = 'None'
 
 REST_AUTH = {
     'USE_JWT': True,
-    'JWT_AUTH_COOKIE': 'my-app-auth',
-    'JWT_AUTH_REFRESH_COOKIE': 'my-refresh-token',
+    'JWT_AUTH_COOKIE': 'csrftoken',
+    'JWT_AUTH_REFRESH_COOKIE': 'refresh-token',
     'JWT_AUTH_SECURE': True,
     'JWT_AUTH_SAMESITE': 'None',
     'SESSION_LOGIN': False,
