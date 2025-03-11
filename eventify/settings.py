@@ -39,7 +39,8 @@ ALLOWED_HOSTS = [
 # CORS settings
 if 'CLIENT_ORIGIN' in os.environ:
     CORS_ALLOWED_ORIGINS = [
-        os.environ.get('CLIENT_ORIGIN')
+        os.environ.get('CLIENT_ORIGIN'),
+        'http://localhost:3000'
     ]
 if 'CLIENT_ORIGIN_DEV' in os.environ:
     dev_origin = os.environ['CLIENT_ORIGIN_DEV']
@@ -243,10 +244,10 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-# # For development only
+# # CSRF settings
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",           # local development
-    "https://eventify-front-e281c9a84c02.herokuapp.com/" # production domain
+    "https://eventify-front-e281c9a84c02.herokuapp.com" # production domain (removed trailing slash)
 ]
 CSRF_COOKIE_SAMESITE = 'None'
-CSRF_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = True

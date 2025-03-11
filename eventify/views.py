@@ -10,7 +10,10 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 
 @ensure_csrf_cookie
 def csrf(request):
-    return HttpResponse("CSRF cookie set")
+    return HttpResponse("CSRF cookie set", headers={
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Origin": request.headers.get("Origin", "*")
+    })
 
 @api_view()
 def root_route(request):
