@@ -30,3 +30,30 @@ class Event(models.Model):
 
     def __str__(self):
         return f"{self.title} by {self.owner}"
+
+
+# Model to track event attendance/registration
+class EventAttendee(models.Model):
+    """
+    Allows users to register for events.
+    Links users to events they plan to attend.
+    Ensures a user can only register once for a given event.
+    """
+    owner = models.ForeignKey(
+        User,
+        related_name='attending',
+        on_delete=models.CASCADE
+    )
+    event = models.ForeignKey(
+        Event,
+        related_name='attendees',
+        on_delete=models.CASCADE
+    )
+    registered_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-registered_at']
+        unique_together = ['owner', 'event']  # Prevents duplicate registrations
+
+    def __str__(self):
+        return f'{self.owner} attending {self.event}'
