@@ -160,3 +160,7 @@ python manage.py runserver
 
 - Django REST Framework documentation
 - Code Institute tutorials
+
+## FrontEnd
+This django Rest Framework application creates the main functionality API's. These are then consumed by the React Frontend application to create the apps main functionality. For more information about the frontend, please visit the backend repository.
+https://github.com/Lochy2000/eventify-frontend/
