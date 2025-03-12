@@ -1,6 +1,6 @@
 # events/serializers.py
 from rest_framework import serializers
-from .models import Event
+from .models import Event, EventAttendee
 from likes.models import Like
 from favorites.models import Favorite
 
@@ -11,6 +11,9 @@ class EventSerializer(serializers.ModelSerializer):
     likes_count = serializers.ReadOnlyField()
     comments_count = serializers.ReadOnlyField()
     favorites_count = serializers.SerializerMethodField()
+    # Add fields for event attendance
+    attendees_count = serializers.ReadOnlyField()
+    attendance_id = serializers.SerializerMethodField()  # To track current user's attendance
 
     def get_is_owner(self, obj):
         request = self.context['request']
@@ -32,6 +35,14 @@ class EventSerializer(serializers.ModelSerializer):
     
     def get_favorites_count(self,obj):
         return obj.favorited_by_count()
+        
+    # Get attendance ID for the current user if they're registered
+    def get_attendance_id(self, obj):
+        user = self.context['request'].user
+        if user.is_authenticated:
+            attendance = EventAttendee.objects.filter(owner=user, event=obj).first()
+            return attendance.id if attendance else None
+        return None
 
     class Meta:
         model = Event
@@ -39,5 +50,24 @@ class EventSerializer(serializers.ModelSerializer):
             'id', 'owner', 'created_at', 'updated_at', 'title',
             'description', 'date', 'location', 'category', 'cover',
             'price', 'is_owner', 'like_id', 'likes_count', 'comments_count',
-            'favorite_id','favorite_count'
+            'favorite_id','favorites_count', 'attendees_count', 'attendance_id'
+        ]
+
+
+# Serializer for event attendance/registration
+class EventAttendeeSerializer(serializers.ModelSerializer):
+    """
+    Serializer for EventAttendee model, handling event registrations.
+    Includes convenience fields for easier frontend rendering.
+    """
+    owner = serializers.ReadOnlyField(source='owner.username')
+    event_title = serializers.ReadOnlyField(source='event.title')
+    event_date = serializers.ReadOnlyField(source='event.date')
+    event_image = serializers.ReadOnlyField(source='event.cover')
+    
+    class Meta:
+        model = EventAttendee
+        fields = [
+            'id', 'owner', 'event', 'registered_at', 
+            'event_title', 'event_date', 'event_image'
         ]
