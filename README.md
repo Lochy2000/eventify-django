@@ -5,6 +5,7 @@
 - [Overview](#overview)
 - [Features](#features)
 - [Database Schema](#database-schema)
+- [Models](#models)
 - [API Endpoints](#api-endpoints)
 - [Technologies Used](#technologies-used)
 - [Testing](#testing)
@@ -55,6 +56,29 @@ The API consists of multiple custom models that store and manage data:
 | image | ImageField | Event cover image |
 | creator | ForeignKey | Link to User model |
 
+## Models
+
+### Event Model
+
+The Event model stores information about events:
+- Title
+- Description
+- Date
+- Location
+- Category
+- Cover image
+- Price
+
+### EventAttendee Model
+
+The EventAttendee model tracks who is attending which events:
+- Owner (User)
+- Event
+- Registration timestamp
+
+This creates a many-to-many relationship between users and events, allowing users to register for multiple events and events to have multiple attendees.
+
+
 ## API Endpoints
 
 The API provides the following endpoints:
@@ -65,6 +89,23 @@ The API provides the following endpoints:
 - `/api/comments/` - Comment management endpoints
 - `/api/favorites/` - Favorites management endpoints
 - `/api/follows/` - User follow relationship endpoints
+
+### Events
+
+- `GET /api/events/` - List all events
+- `POST /api/events/` - Create a new event (authenticated users only)
+- `GET /api/events/:id/` - Get details for a specific event
+- `PUT /api/events/:id/` - Update an event (owner only)
+- `DELETE /api/events/:id/` - Delete an event (owner only)
+
+### Event Attendance
+
+- `GET /api/attendees/` - List events the current user is attending
+- `POST /api/attendees/` - Register for an event (body should contain event ID)
+- `GET /api/attendees/:id/` - Get details of a specific attendance record
+- `DELETE /api/attendees/:id/` - Cancel registration for an event
+- `GET /api/events/:event_id/attendees/` - List all attendees for a specific event (event owner or attendees only)
+
 
 ## Technologies Used
 
