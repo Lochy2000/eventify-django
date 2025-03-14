@@ -3,6 +3,7 @@ from rest_framework import serializers
 from .models import Event, EventAttendee
 from likes.models import Like
 from favorites.models import Favorite
+import os
 
 class EventSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.username')
@@ -15,6 +16,13 @@ class EventSerializer(serializers.ModelSerializer):
     # Add fields for event attendance
     attendees_count = serializers.ReadOnlyField()
     attendance_id = serializers.SerializerMethodField()  # To track current user's attendance
+    cover = serializers.SerializerMethodField()
+
+    def get_cover(self, obj):
+        # Return the Cloudinary URL directly if it exists
+        if obj.cover and hasattr(obj.cover, 'url'):
+            return obj.cover.url
+        return None
 
     def get_is_owner(self, obj):
         request = self.context['request']

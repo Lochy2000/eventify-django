@@ -2,6 +2,7 @@
 
 from django.db import models
 from django.contrib.auth.models import User
+from cloudinary.models import CloudinaryField
 
 class Event(models.Model):
     CATEGORY_CHOICES = [
@@ -22,7 +23,12 @@ class Event(models.Model):
     date = models.DateTimeField()
     location = models.CharField(max_length=255)
     category = models.CharField(max_length=50, choices=CATEGORY_CHOICES)
-    cover = models.ImageField(upload_to='events/', blank=True)
+    cover = CloudinaryField('event_image', folder='events', blank=True, null=True, 
+                          transformation={
+                              'width': 800,
+                              'height': 600,
+                              'crop': 'fill'
+                          })
     price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
     class Meta:

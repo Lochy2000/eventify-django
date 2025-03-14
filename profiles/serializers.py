@@ -17,6 +17,12 @@ class ProfileSerializer(serializers.ModelSerializer):
     following_id = serializers.SerializerMethodField()
     followers_count = serializers.SerializerMethodField()
     following_count = serializers.SerializerMethodField()
+    avatar = serializers.SerializerMethodField()
+
+    def get_avatar(self, obj):
+        if obj.avatar and hasattr(obj.avatar, 'url'):
+            return obj.avatar.url
+        return None
 
     def get_is_owner(self, obj):
         request = self.context['request']
