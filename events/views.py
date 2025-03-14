@@ -15,7 +15,9 @@ class EventList(generics.ListCreateAPIView):
         likes_count=Count('likes', distinct=True),
         comments_count=Count('comments', distinct=True),
         # Add count of attendees for each event
-        attendees_count=Count('attendees', distinct=True)
+        attendees_count=Count('attendees', distinct=True),
+        # Add count of favorites
+        favorites_count=Count('favorited_by', distinct=True)
     )
     search_fields = ['title', 'owner__username', 'category']
     ordering_fields = ['date', 'likes_count', 'comments_count', 'attendees_count']
@@ -36,7 +38,9 @@ class EventDetail(generics.RetrieveUpdateDestroyAPIView):
         likes_count=Count('likes', distinct=True),
         comments_count=Count('comments', distinct=True),
         # Add count of attendees for event detail
-        attendees_count=Count('attendees', distinct=True)
+        attendees_count=Count('attendees', distinct=True),
+        # Add count of favorites
+        favorites_count=Count('favorited_by', distinct=True)
     )
 
 
