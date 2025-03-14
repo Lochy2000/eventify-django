@@ -19,6 +19,12 @@ import cloudinary.uploader
 import cloudinary.api
 from datetime import timedelta
 
+# Import env.py if it exists
+try:
+    import env
+except ImportError:
+    pass
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -157,6 +163,9 @@ REST_AUTH = {
 # Authentication settings
 ACCOUNT_EMAIL_REQUIRED = False
 ACCOUNT_EMAIL_VERIFICATION = 'none'
+# Updated from deprecated ACCOUNT_AUTHENTICATION_METHOD
+ACCOUNT_LOGIN_METHODS = {'username'}
+# Keep for backward compatibility
 ACCOUNT_AUTHENTICATION_METHOD = 'username'
 
 TEMPLATES = [
