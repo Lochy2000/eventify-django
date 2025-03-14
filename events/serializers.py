@@ -10,7 +10,7 @@ class EventSerializer(serializers.ModelSerializer):
     like_id = serializers.SerializerMethodField()
     likes_count = serializers.ReadOnlyField()
     comments_count = serializers.ReadOnlyField()
-    favorites_count = serializers.SerializerMethodField()
+    favorites_count = serializers.ReadOnlyField()
     # Add fields for event attendance
     attendees_count = serializers.ReadOnlyField()
     attendance_id = serializers.SerializerMethodField()  # To track current user's attendance
@@ -32,9 +32,6 @@ class EventSerializer(serializers.ModelSerializer):
             favorite = Favorite.objects.filter(owner=user, event=obj).first()
             return favorite.id if favorite else None
         return None
-    
-    def get_favorites_count(self,obj):
-        return obj.favorited_by_count()
         
     # Get attendance ID for the current user if they're registered
     def get_attendance_id(self, obj):
@@ -50,7 +47,7 @@ class EventSerializer(serializers.ModelSerializer):
             'id', 'owner', 'created_at', 'updated_at', 'title',
             'description', 'date', 'location', 'category', 'cover',
             'price', 'is_owner', 'like_id', 'likes_count', 'comments_count',
-            'favorite_id','favorites_count', 'attendees_count', 'attendance_id'
+            'favorite_id', 'favorites_count', 'attendees_count', 'attendance_id'
         ]
 
 
