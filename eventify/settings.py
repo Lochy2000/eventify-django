@@ -43,10 +43,19 @@ ALLOWED_HOSTS = [
     'localhost',
 ]
 # CORS settings
-CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000',
-    'https://eventify-front-e281c9a84c02.herokuapp.com',
-]
+if 'CLIENT_ORIGIN' in os.environ:
+    CORS_ALLOWED_ORIGINS = [
+        os.environ.get('CLIENT_ORIGIN'),
+    ]
+    # Add the development client origin if it exists
+    if 'CLIENT_ORIGIN_DEV' in os.environ:
+        CORS_ALLOWED_ORIGINS.append(os.environ.get('CLIENT_ORIGIN_DEV'))
+else:
+    # Fallback to hardcoded values if environment variables are not set
+    CORS_ALLOWED_ORIGINS = [
+        'http://localhost:3000',
+        'https://eventify-front-e281c9a84c02.herokuapp.com',
+    ]
 
 # Allow all origins in development
 if DEBUG:
