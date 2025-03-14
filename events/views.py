@@ -25,7 +25,23 @@ class EventList(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         """Set the owner to the current user when creating an event"""
-        serializer.save(owner=self.request.user)
+        # Debug logging for file uploads
+        print("\n==== EVENT CREATION DEBUG ====")
+        print(f"Request method: {self.request.method}")
+        print(f"Request content type: {self.request.content_type}")
+        print(f"Request FILES: {self.request.FILES}")
+        if 'cover' in self.request.FILES:
+            print(f"Cover file found: {self.request.FILES['cover'].name}, size: {self.request.FILES['cover'].size} bytes")
+        else:
+            print("No cover file in request")
+        print("==============================\n")
+            
+        # Save the event
+        event = serializer.save(owner=self.request.user)
+        
+        # Log the result
+        print(f"Event created: {event.id}, cover: {event.cover}")
+        return event
 
 
 class EventDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -42,6 +58,26 @@ class EventDetail(generics.RetrieveUpdateDestroyAPIView):
         # Add count of favorites
         favorites_count=Count('favorited_by', distinct=True)
     )
+    
+    def perform_update(self, serializer):
+        """Override to add debugging for image uploads during event updates"""
+        # Debug logging for file uploads
+        print("\n==== EVENT UPDATE DEBUG ====")
+        print(f"Request method: {self.request.method}")
+        print(f"Request content type: {self.request.content_type}")
+        print(f"Request FILES: {self.request.FILES}")
+        if 'cover' in self.request.FILES:
+            print(f"Cover file found: {self.request.FILES['cover'].name}, size: {self.request.FILES['cover'].size} bytes")
+        else:
+            print("No cover file in update request")
+        print("============================\n")
+            
+        # Save the event
+        event = serializer.save()
+        
+        # Log the result
+        print(f"Event updated: {event.id}, cover: {event.cover}")
+        return event
 
 
 # Views for event attendance/registration

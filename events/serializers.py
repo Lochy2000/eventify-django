@@ -20,9 +20,19 @@ class EventSerializer(serializers.ModelSerializer):
 
     def get_cover(self, obj):
         # Return the Cloudinary URL directly if it exists
-        if obj.cover and hasattr(obj.cover, 'url'):
+        if not obj.cover:
+            return None
+            
+        # Handle different types of Cloudinary field values
+        if hasattr(obj.cover, 'url'):
+            # If it's a CloudinaryField instance
             return obj.cover.url
-        return None
+        elif isinstance(obj.cover, str):
+            # If it's already a string URL
+            return obj.cover
+        else:
+            # For any other case, try to convert to string
+            return str(obj.cover) if obj.cover else None
 
     def get_is_owner(self, obj):
         request = self.context['request']
