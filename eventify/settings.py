@@ -48,6 +48,10 @@ CORS_ALLOWED_ORIGINS = [
     'https://eventify-front-e281c9a84c02.herokuapp.com',
 ]
 
+# Allow all origins in development
+if DEBUG:
+    CORS_ALLOW_ALL_ORIGINS = True
+
 # Allow credentials for CORS
 CORS_ALLOW_CREDENTIALS = True
 
@@ -113,6 +117,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
+    'eventify.cors_middleware.CorsMiddleware',  # Custom CORS middleware for debugging
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware', 
