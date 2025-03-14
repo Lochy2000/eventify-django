@@ -10,6 +10,7 @@ class EventSerializer(serializers.ModelSerializer):
     like_id = serializers.SerializerMethodField()
     likes_count = serializers.ReadOnlyField()
     comments_count = serializers.ReadOnlyField()
+    favorite_id = serializers.SerializerMethodField()
     favorites_count = serializers.ReadOnlyField()
     # Add fields for event attendance
     attendees_count = serializers.ReadOnlyField()
