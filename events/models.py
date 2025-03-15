@@ -28,16 +28,7 @@ class Event(models.Model):
         folder='events', 
         blank=True, 
         null=True, 
-        resource_type='auto',  # Allow any file type (image)
-        transformation={
-            'width': 800,
-            'height': 600,
-            'crop': 'fill',
-            'quality': 'auto',
-            'fetch_format': 'auto',  # Convert to optimal format
-        },
-        # Use a backup default image if upload fails
-        default='https://res.cloudinary.com/dpw2txejq/image/upload/v1/events/default-event_zuhvve'
+        default='default_post_o0lbny'
     )
     price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
