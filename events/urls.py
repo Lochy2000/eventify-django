@@ -11,7 +11,4 @@ urlpatterns = [
     path('attendees/', views.EventAttendeeList.as_view(), name='event-attendee-list'),
     path('attendees/<int:pk>/', views.EventAttendeeDetail.as_view(), name='event-attendee-detail'),
     path('events/<int:event_id>/attendees/', views.EventAttendeesByEvent.as_view(), name='event-attendees-by-event'),
-    
-    # Test URL for Cloudinary
-    path('test-cloudinary/', views.test_cloudinary_upload, name='test-cloudinary'),
 ]
