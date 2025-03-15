@@ -31,10 +31,16 @@ class EventList(generics.ListCreateAPIView):
         print(f"Request method: {self.request.method}")
         print(f"Request content type: {self.request.content_type}")
         print(f"Request FILES: {self.request.FILES}")
+        print(f"Request data keys: {self.request.data.keys()}")
         if 'cover' in self.request.FILES:
             print(f"Cover file found: {self.request.FILES['cover'].name}, size: {self.request.FILES['cover'].size} bytes")
+            file_content = self.request.FILES['cover'].read(50)  # Read first 50 bytes
+            self.request.FILES['cover'].seek(0)  # Reset file pointer
+            print(f"First bytes of file: {file_content}")
         else:
             print("No cover file in request")
+            if 'cover' in self.request.data:
+                print(f"Cover in request.data: {type(self.request.data['cover'])}")
         print("==============================\n")
             
         # Save the event
