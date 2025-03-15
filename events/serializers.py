@@ -16,20 +16,10 @@ class EventSerializer(serializers.ModelSerializer):
     # Add fields for event attendance
     attendees_count = serializers.ReadOnlyField()
     attendance_id = serializers.SerializerMethodField()  # To track current user's attendance
-    cover = serializers.SerializerMethodField()
+    # Make cover an explicit image field to ensure proper handling
+    cover = serializers.ImageField(required=False)
 
-    def get_cover(self, obj):
-        # Return the Cloudinary URL directly if it exists
-        if not obj.cover:
-            return None
-            
-        # Handle different types of Cloudinary field values
-        if hasattr(obj.cover, 'url'):
-            return obj.cover.url
-        elif isinstance(obj.cover, str):
-            return obj.cover
-        else:
-            return str(obj.cover) if obj.cover else None
+
 
     def get_is_owner(self, obj):
         request = self.context['request']
@@ -61,6 +51,8 @@ class EventSerializer(serializers.ModelSerializer):
         """Custom validation for cover field"""
         if value is None:
             return value
+            
+        print(f"Validating cover: {type(value)}, value: {value}")
             
         # Check file size (10MB limit)
         if hasattr(value, 'size') and value.size > 10 * 1024 * 1024:
