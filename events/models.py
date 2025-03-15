@@ -3,9 +3,6 @@
 from django.db import models
 from django.contrib.auth.models import User
 from cloudinary.models import CloudinaryField
-from django.db.models.signals import pre_save
-from django.dispatch import receiver
-from django.core.files.uploadedfile import InMemoryUploadedFile
 
 class Event(models.Model):
     CATEGORY_CHOICES = [
@@ -30,14 +27,17 @@ class Event(models.Model):
         'event_image', 
         folder='events', 
         blank=True, 
-        null=True,
-        format='jpg',
-        use_filename=True,
+        null=True, 
+        resource_type='auto',  # Allow any file type (image)
         transformation={
             'width': 800,
             'height': 600,
-            'crop': 'fill'
-        }
+            'crop': 'fill',
+            'quality': 'auto',
+            'fetch_format': 'auto',  # Convert to optimal format
+        },
+        # Use a backup default image if upload fails
+        default='https://res.cloudinary.com/dpw2txejq/image/upload/v1/events/default-event_zuhvve'
     )
     price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
@@ -46,31 +46,22 @@ class Event(models.Model):
 
     def __str__(self):
         return f"{self.title} by {self.owner}"
-
-
-# Add a signal to debug Cloudinary uploads
-@receiver(pre_save, sender=Event)
-def log_cloudinary_upload(sender, instance, **kwargs):
-    """Log Cloudinary upload attempt for debugging"""
-    print(f"\n==== CLOUDINARY DEBUG ====")
-    print(f"Event being saved: {instance.title}")
-    print(f"Current cover value: {instance.cover}")
     
-    # Check if this is a file upload
-    if hasattr(instance.cover, 'file') and isinstance(instance.cover.file, InMemoryUploadedFile):
-        print(f"File detected: {instance.cover.name}, size: {instance.cover.size} bytes")
+    def save(self, *args, **kwargs):
+        """Override save method to handle Cloudinary cover field"""
         try:
-            # Force CloudinaryField to process the file
-            print("Attempting to process file...")
-            # Get resource type (required for Cloudinary to process)
-            resource_type = getattr(instance.cover, 'resource_type', 'image')
-            print(f"Resource type: {resource_type}")
+            # Call parent save method
+            super().save(*args, **kwargs)
         except Exception as e:
-            print(f"ERROR processing file: {str(e)}")
-    else:
-        print("No file attached or file already processed")
-    
-    print("===========================\n")
+            # If error is related to Cloudinary, try to save without the image
+            if 'cover' in str(e).lower() or 'cloudinary' in str(e).lower():
+                # Set cover to default value
+                self.cover = None
+                # Try saving again without triggering this custom save method
+                super(Event, self).save(*args, **kwargs)
+            else:
+                # Re-raise other errors
+                raise
 
 
 # Model to track event attendance/registration
