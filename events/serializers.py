@@ -25,13 +25,10 @@ class EventSerializer(serializers.ModelSerializer):
             
         # Handle different types of Cloudinary field values
         if hasattr(obj.cover, 'url'):
-            # If it's a CloudinaryField instance
             return obj.cover.url
         elif isinstance(obj.cover, str):
-            # If it's already a string URL
             return obj.cover
         else:
-            # For any other case, try to convert to string
             return str(obj.cover) if obj.cover else None
 
     def get_is_owner(self, obj):
@@ -60,6 +57,21 @@ class EventSerializer(serializers.ModelSerializer):
             return attendance.id if attendance else None
         return None
 
+    def validate_cover(self, value):
+        """Custom validation for cover field"""
+        if value is None:
+            return value
+            
+        # Check file size (10MB limit)
+        if hasattr(value, 'size') and value.size > 10 * 1024 * 1024:
+            raise serializers.ValidationError("Image file too large ( > 10MB )")
+        
+        # Check file type
+        if hasattr(value, 'content_type') and not value.content_type.startswith('image/'):
+            raise serializers.ValidationError("File is not an image")
+            
+        return value
+        
     class Meta:
         model = Event
         fields = [
