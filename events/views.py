@@ -4,41 +4,6 @@ from rest_framework import generics, permissions, filters
 from .models import Event, EventAttendee
 from .serializers import EventSerializer, EventAttendeeSerializer
 from eventify.permissions import IsOwnerOrReadOnly
-from django.http import JsonResponse
-import cloudinary.uploader
-
-# Direct Cloudinary test view
-def test_cloudinary_upload(request):
-    """Test direct Cloudinary upload - accessible at /api/test-cloudinary/"""
-    if request.method == 'POST' and request.FILES.get('image'):
-        file = request.FILES['image']
-        print(f"\n==== DIRECT CLOUDINARY TEST ====")
-        print(f"Received file: {file.name}, size: {file.size} bytes")
-        
-        try:
-            # Try direct upload to Cloudinary
-            print("Attempting direct upload to Cloudinary...")
-            result = cloudinary.uploader.upload(
-                file,
-                folder="eventify_test",
-                resource_type="image"
-            )
-            print(f"Upload successful: {result['url']}")
-            return JsonResponse({
-                'success': True,
-                'url': result['url'],
-                'public_id': result['public_id']
-            })
-        except Exception as e:
-            print(f"Cloudinary upload error: {str(e)}")
-            # Get more details about the error
-            import traceback
-            traceback.print_exc()
-            return JsonResponse({
-                'success': False,
-                'error': str(e)
-            }, status=500)
-    return JsonResponse({'error': 'No file provided'}, status=400)
 
 
 class EventList(generics.ListCreateAPIView):
