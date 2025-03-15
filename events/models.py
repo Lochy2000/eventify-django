@@ -23,12 +23,21 @@ class Event(models.Model):
     date = models.DateTimeField()
     location = models.CharField(max_length=255)
     category = models.CharField(max_length=50, choices=CATEGORY_CHOICES)
+    # Use a more explicit CloudinaryField configuration
     cover = CloudinaryField(
-        'event_image', 
-        folder='events', 
-        blank=True, 
-        null=True, 
-        default='default_post_o0lbny'
+        'image',
+        folder='events',
+        blank=True,
+        null=True,
+        default='default_post_o0lbny',
+        # Explicitly set the resource type to auto so it can handle different file types
+        resource_type='auto',
+        # Make sure transformation works
+        transformation={
+            'crop': 'fill',
+            'width': 800,
+            'height': 600
+        }
     )
     price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
