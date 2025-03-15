@@ -5,8 +5,15 @@ from django.utils import timezone
 from rest_framework.test import APITestCase
 from rest_framework import status
 from django.urls import reverse
-from .models import Event, Like, Comment
+from .models import Event
+from likes.models import Like
+from comments.models import Comment
 from datetime import datetime, timedelta
+import os
+from django.core.files.uploadedfile import SimpleUploadedFile
+import tempfile
+import cloudinary.uploader
+from PIL import Image
 
 class EventTests(APITestCase):
     def setUp(self):
@@ -147,3 +154,74 @@ class LikeTests(APITestCase):
         response = self.client.post(url)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(Like.objects.count(), 1)
+
+
+class CloudinaryUploadTest(APITestCase):
+    """Test Cloudinary image upload functionality"""
+    
+    def setUp(self):
+        # Create test user
+        self.user = User.objects.create_user(username='testuser', password='testpass123')
+        
+        # Create a small test image file
+        self.image_file = self._create_test_image()
+    
+    def _create_test_image(self):
+        # Create a temporary image file for testing
+        with tempfile.NamedTemporaryFile(suffix='.jpg', delete=False) as temp_file:
+            # Create a small test image using PIL
+            image = Image.new('RGB', (100, 100), color='red')
+            image.save(temp_file, format='JPEG')
+            temp_file.flush()
+            return temp_file.name
+    
+    def tearDown(self):
+        # Clean up the temporary file
+        if hasattr(self, 'image_file') and os.path.exists(self.image_file):
+            os.unlink(self.image_file)
+    
+    def test_event_with_image(self):
+        """Test creating an event with an image"""
+        # Skip test if Cloudinary credentials are not set
+        if not all([os.environ.get('CLOUDINARY_CLOUD_NAME'),
+                  os.environ.get('CLOUDINARY_API_KEY'),
+                  os.environ.get('CLOUDINARY_API_SECRET')]):
+            self.skipTest("Cloudinary credentials not found in environment")
+            return
+            
+        self.client.force_authenticate(user=self.user)
+        url = reverse('event-list')
+        
+        # Create event data with image
+        with open(self.image_file, 'rb') as img:
+            image_data = img.read()
+        
+        image = SimpleUploadedFile(
+            name='test_image.jpg',
+            content=image_data,
+            content_type='image/jpeg'
+        )
+        
+        # Prepare event data
+        data = {
+            'title': 'Event With Image',
+            'description': 'Test Description',
+            'date': (timezone.now() + timedelta(days=7)).isoformat(),
+            'location': 'Test Location',
+            'category': 'tech',
+            'price': 15.00,
+            'cover': image
+        }
+        
+        # Make API request
+        response = self.client.post(url, data=data, format='multipart')
+        
+        # Verify the event was created successfully
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        
+        # Verify the image was uploaded to Cloudinary
+        event_id = response.data['id']
+        event = Event.objects.get(id=event_id)
+        
+        # Check if the cover field has a value
+        self.assertIsNotNone(event.cover, "The cover field should not be None after upload")
