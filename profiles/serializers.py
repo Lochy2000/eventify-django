@@ -17,9 +17,11 @@ class ProfileSerializer(serializers.ModelSerializer):
     following_id = serializers.SerializerMethodField()
     followers_count = serializers.SerializerMethodField()
     following_count = serializers.SerializerMethodField()
-    avatar = serializers.SerializerMethodField()
+    avatar_url = serializers.SerializerMethodField()
+    # Add explicit ImageField for avatar to handle uploads
+    avatar = serializers.ImageField(required=False)
 
-    def get_avatar(self, obj):
+    def get_avatar_url(self, obj):
         if obj.avatar and hasattr(obj.avatar, 'url'):
             return obj.avatar.url
         # If no avatar, return the default avatar URL
@@ -48,6 +50,6 @@ class ProfileSerializer(serializers.ModelSerializer):
         model = Profile
         fields = [
             'id', 'owner', 'created_at', 'updated_at', 'name',
-            'bio', 'location', 'avatar', 'is_owner', 'following_id',
+            'bio', 'location', 'avatar', 'avatar_url', 'is_owner', 'following_id',
             'followers_count', 'following_count',
         ]
