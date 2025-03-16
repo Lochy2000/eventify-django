@@ -22,7 +22,8 @@ class ProfileSerializer(serializers.ModelSerializer):
     def get_avatar(self, obj):
         if obj.avatar and hasattr(obj.avatar, 'url'):
             return obj.avatar.url
-        return None
+        # If no avatar, return the default avatar URL
+        return 'https://res.cloudinary.com/dpw2txejq/image/upload/default_profile_ju9xum'
 
     def get_is_owner(self, obj):
         request = self.context['request']
