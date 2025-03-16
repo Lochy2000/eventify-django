@@ -1,6 +1,7 @@
 # events/views.py
 from django.db.models import Count
 from rest_framework import generics, permissions, filters
+from django_filters.rest_framework import DjangoFilterBackend
 from .models import Event, EventAttendee
 from .serializers import EventSerializer, EventAttendeeSerializer
 from eventify.permissions import IsOwnerOrReadOnly
@@ -20,6 +21,11 @@ class EventList(generics.ListCreateAPIView):
         # Add count of favorites
         favorites_count=Count('favorited_by', distinct=True)
     )
+    filter_backends = [
+        filters.SearchFilter,
+        filters.OrderingFilter,
+        DjangoFilterBackend,
+    ]
     search_fields = ['title', 'owner__username', 'category']
     ordering_fields = ['date', 'likes_count', 'comments_count', 'attendees_count']
     filterset_fields = ['category', 'owner__profile']
