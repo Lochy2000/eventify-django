@@ -97,16 +97,28 @@ class EventDetail(generics.RetrieveUpdateDestroyAPIView):
 class EventAttendeeList(generics.ListCreateAPIView):
     """
     List all events a user is attending, or register for a new event.
-    GET: Returns list of events the current user is registered for
+    GET: Returns list of events the user is registered for (can filter by owner__username)
     POST: Register the current user for an event
     """
     serializer_class = EventAttendeeSerializer
     permission_classes = [permissions.IsAuthenticated]
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['owner', 'owner__username', 'event'] 
     
     def get_queryset(self):
-        """Return only attendance records for the current user"""
-        user = self.request.user
-        return EventAttendee.objects.filter(owner=user)
+        """Return all attendance records with the ability to filter"""
+        # Check if specific owner username is requested
+        username = self.request.query_params.get('owner__username', None)
+        if username:
+            # If we have a username parameter, filter by that username
+            from django.contrib.auth.models import User
+            try:
+                user = User.objects.get(username=username)
+                return EventAttendee.objects.filter(owner=user)
+            except User.DoesNotExist:
+                return EventAttendee.objects.none()
+        # If no username specified, default to current user for backwards compatibility
+        return EventAttendee.objects.filter(owner=self.request.user)
     
     def perform_create(self, serializer):
         """Set the owner to the current user when registering for an event"""
