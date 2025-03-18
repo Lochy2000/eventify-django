@@ -36,7 +36,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # Debug mode
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
     os.environ.get('ALLOWED_HOST', 'eventify-back-d016873ba1b8.herokuapp.com'),
