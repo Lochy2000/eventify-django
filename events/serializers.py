@@ -33,8 +33,10 @@ class EventSerializer(serializers.ModelSerializer):
         return None
 
     def get_favorite_id(self, obj):
+        """Get favorite ID for the current user only"""
         user = self.context['request'].user
         if user.is_authenticated:
+            # Only return favorite ID if the current user has favorited this event
             favorite = Favorite.objects.filter(owner=user, event=obj).first()
             return favorite.id if favorite else None
         return None

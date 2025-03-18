@@ -13,14 +13,6 @@ class EventList(generics.ListCreateAPIView):
     """
     serializer_class = EventSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-    queryset = Event.objects.annotate(
-        likes_count=Count('likes', distinct=True),
-        comments_count=Count('comments', distinct=True),
-        # Add count of attendees for each event
-        attendees_count=Count('attendees', distinct=True),
-        # Add count of favorites
-        favorites_count=Count('favorited_by', distinct=True)
-    )
     filter_backends = [
         filters.SearchFilter,
         filters.OrderingFilter,
@@ -29,6 +21,53 @@ class EventList(generics.ListCreateAPIView):
     search_fields = ['title', 'owner__username', 'category']
     ordering_fields = ['date', 'likes_count', 'comments_count', 'attendees_count']
     filterset_fields = ['category', 'owner__profile']
+    
+    def get_queryset(self):
+        """
+        Custom queryset method to handle special filters like favorites
+        """
+        # Base queryset with annotations
+        queryset = Event.objects.annotate(
+            likes_count=Count('likes', distinct=True),
+            comments_count=Count('comments', distinct=True),
+            attendees_count=Count('attendees', distinct=True),
+            favorites_count=Count('favorited_by', distinct=True)
+        )
+        
+        # Handle favorite filter - show only events favorited by current user
+        if self.request.query_params.get('favorite') == 'true':
+            if self.request.user.is_authenticated:
+                # Get IDs of events favorited by the current user
+                from favorites.models import Favorite
+                favorite_event_ids = Favorite.objects.filter(
+                    owner=self.request.user
+                ).values_list('event_id', flat=True)
+                
+                # Filter events to only those IDs
+                queryset = queryset.filter(id__in=favorite_event_ids)
+                
+                print(f"Filtered to {queryset.count()} favorites for user {self.request.user.username}")
+            else:
+                # No favorites for unauthenticated users
+                queryset = queryset.none()
+        
+        # Handle 'attending=true' filter similar to favorites
+        if self.request.query_params.get('attending') == 'true':
+            if self.request.user.is_authenticated:
+                # Get IDs of events the user is attending
+                attendance_event_ids = EventAttendee.objects.filter(
+                    owner=self.request.user
+                ).values_list('event_id', flat=True)
+                
+                # Filter events to only those IDs
+                queryset = queryset.filter(id__in=attendance_event_ids)
+                
+                print(f"Filtered to {queryset.count()} events user {self.request.user.username} is attending")
+            else:
+                # No events for unauthenticated users
+                queryset = queryset.none()
+                
+        return queryset
 
     def perform_create(self, serializer):
         """Set the owner to the current user when creating an event"""
