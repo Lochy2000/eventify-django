@@ -83,7 +83,15 @@ class EventAttendeeSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.username')
     event_title = serializers.ReadOnlyField(source='event.title')
     event_date = serializers.ReadOnlyField(source='event.date')
-    event_image = serializers.ReadOnlyField(source='event.cover')
+    # Use a SerializerMethodField to convert Cloudinary field to URL string
+    event_image = serializers.SerializerMethodField()
+    
+    # Convert CloudinaryResource to string URL to make it JSON serializable
+    def get_event_image(self, obj):
+        if obj.event.cover:
+            # Convert the CloudinaryResource to its URL string representation
+            return str(obj.event.cover)
+        return None
     
     class Meta:
         model = EventAttendee

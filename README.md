@@ -116,7 +116,8 @@ The API provides the following endpoints:
 - Django 4.2
 - Django REST Framework
 - PostgreSQL
-- JWT Authentication
+- Token Authentication
+- Cloudinary (for image storage)
 - Pillow
 - django-cors-headers
 
@@ -130,6 +131,19 @@ Manual testing was conducted throughout the development process to ensure the AP
 2. Database integrity and validation testing
 3. Authentication and permission testing
 4. Error handling testing
+5. Cloudinary image upload testing
+
+### Cloudinary Integration
+
+The application integrates with Cloudinary for image storage. During development, we encountered issues with image uploads to Cloudinary. We implemented the following approach to diagnose and fix the issues:
+
+1. Added proper error handling in the Event model to gracefully handle Cloudinary upload failures
+2. Correctly configured the CloudinaryField in models.py with appropriate transformations
+3. Verified Cloudinary credentials and connection through diagnostic tests
+4. Implemented validation for image uploads (size and file type)
+5. Ensured the React frontend correctly handles multipart/form-data for image uploads
+
+The integration now works seamlessly, allowing users to upload images for events which are stored in Cloudinary and served through their CDN.
 
 Testing documentation with results:
 
@@ -164,6 +178,9 @@ The following environment variables need to be set for deployment:
 - `DEBUG` - Set to False for production
 - `DATABASE_URL` - PostgreSQL database URL
 - `ALLOWED_HOSTS` - Comma-separated list of allowed hosts
+- `CLOUDINARY_CLOUD_NAME` - Cloudinary cloud name
+- `CLOUDINARY_API_KEY` - Cloudinary API key
+- `CLOUDINARY_API_SECRET` - Cloudinary API secret
 
 ## Local Development
 
