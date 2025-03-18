@@ -28,7 +28,78 @@ Eventify API is a RESTful API built with Django REST Framework that serves as th
 
 ## Database Schema
 
-The API consists of multiple custom models that store and manage data:
+The API consists of multiple custom models that store and manage data. Below is a simple Entity Relationship Diagram (ERD) showing the relationships between models:
+
+### Entity Relationship Diagram
+
+```mermaid
+erDiagram
+    USER {
+        int id PK
+        string username
+        string email
+        string password
+    }
+    
+    PROFILE {
+        int id PK
+        int user_id FK
+        string bio
+        string avatar
+        string location
+    }
+    
+    EVENT {
+        int id PK
+        int creator_id FK
+        string title
+        string description
+        datetime date
+        string location
+        string category
+        string image
+        float price
+    }
+    
+    COMMENT {
+        int id PK
+        int creator_id FK
+        int event_id FK
+        string content
+        datetime created_at
+    }
+    
+    EVENTATTENDEE {
+        int id PK
+        int user_id FK
+        int event_id FK
+        datetime created_at
+    }
+    
+    FAVORITE {
+        int id PK
+        int user_id FK
+        int event_id FK
+        datetime created_at
+    }
+    
+    FOLLOWER {
+        int id PK
+        int owner_id FK
+        int followed_id FK
+        datetime created_at
+    }
+    
+    USER ||--o{ PROFILE : has
+    USER ||--o{ EVENT : creates
+    USER ||--o{ COMMENT : makes
+    USER ||--o{ EVENTATTENDEE : registers
+    USER ||--o{ FAVORITE : saves
+    USER ||--o{ FOLLOWER : follows
+    EVENT ||--o{ COMMENT : has
+    EVENT ||--o{ EVENTATTENDEE : has
+    EVENT ||--o{ FAVORITE : has
+```
 
 ### User Model
 | Field | Type | Description |
@@ -124,6 +195,19 @@ The API provides the following endpoints:
 ## Testing
 
 Manual testing was conducted throughout the development process to ensure the API functions correctly and meets all requirements. Tests were performed for all CRUD operations across all models.
+
+### Python Code Validation
+
+All Python code in the application was validated using the PEP8 Python validator to ensure it follows Python's style guidelines. While the code is generally compliant with PEP8 standards, there are a few development artifacts like debug print statements that should be removed or replaced with proper logging before final production deployment. These minor issues do not affect functionality and are common during the development phase.
+
+| File | Result | Notes |
+|------|--------|-------|
+| models.py | ⚠️ Pass with warnings | No major issues found |
+| views.py | ⚠️ Pass with warnings | Contains debug print statements |
+| serializers.py | ⚠️ Pass with warnings | Contains debug print statements |
+| urls.py | ✅ Pass | No issues found |
+| permissions.py | ✅ Pass | No issues found |
+| settings.py | ✅ Pass | Some line length exceptions for configuration variables |
 
 ### Testing Process
 
